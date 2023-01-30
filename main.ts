@@ -2,7 +2,7 @@
  * Implementation of Tensorflow Lite in MakeCode
  */
 
-//% color="#4C97FF"
+//% color="#ff6f00"
 namespace tensorflow {
     /**
      * Model trained to return 0 if < 10, or 5 if > 10.
@@ -24,51 +24,27 @@ namespace tensorflow {
     export function makeInference(tfInstance: TensorflowInstance, input: any) {
         return tfInstance.makeInference(input);
     }
-    
-
-    // /**
-    //  * This is a statement block
-    //  */
-    // //% block
-    // export function show() {
-
-    // }
-
-    // /**
-    //  * This is a statement block with a parameter
-    //  */
-    // //% block
-    // export function move(steps: number) {
-
-    // }
-
-    // /**
-    //  * This is a reporter block that returns a number
-    //  */
-    // //% block
-    // export function randomNumber(): number {
-    //     return 0;
-    // }
-
-    // /**
-    //  * This is a reporter block that returns a boolean
-    //  */
-    // //% block
-    // export function randomBoolean(): boolean {
-    //     return false;
-    // }
-
-    // /**
-    //  * This is an event handler block
-    //  */
-    // //% block="on event"
-    // export function onEvent(handler: () => void) {
-
-    // }
 }
 
 class Model {
-    static COMPARE_TO_TEN = new Model();
+    static COMPARE_TO_TEN = new Model((input: number) => {
+        const variability = (Math.random() - 0.5) * 0.2;
+        if (input < 10) {
+            return 0 + variability;
+        } else {
+            return 5 + variability;
+        }
+    });
+
+    _predictionSimulator: (input: any) => any;
+
+    constructor(predictionSimulator: (input: any) => any) {
+        this._predictionSimulator = predictionSimulator;
+    }
+
+    predict(input: any): any {
+        return this._predictionSimulator(input);
+    }
 }
 
 class TensorflowInstance {
@@ -79,6 +55,6 @@ class TensorflowInstance {
     }
 
     makeInference(input: any): any {
-        return "prediction";
+        return this._model.predict(input);
     }
 }
